@@ -1,4 +1,4 @@
-package tokenize
+package rpn
 
 // Operators precedence for Reverse Polish Notation.
 var Operators = map[string]int {

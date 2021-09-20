@@ -1,4 +1,4 @@
-package tokenize
+package rpn
 
 import (
 	"regexp"
@@ -28,7 +28,7 @@ func Tokenize(exp string) ([]string, error) {
 			continue
 		}
 
-		// if first symbol ex: -1-1
+		// If first symbol ex: -1-1
 		if start && string(r) == "-" {
 			unary++
 		}

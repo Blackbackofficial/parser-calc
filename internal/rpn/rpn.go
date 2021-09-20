@@ -2,7 +2,6 @@ package rpn
 
 import (
 	"fmt"
-	"hw/parser-calc/internal/tokenize"
 	"math"
 	"strconv"
 )
@@ -46,7 +45,7 @@ func (c *RPN) PopOperatorFromStack() []string {
 func (c *RPN) ConvertToRPN(expStack []string) string {
 	for i := range expStack {
 		item := expStack[i]
-		if _, found := tokenize.Operators[item]; found {
+		if _, found := Operators[item]; found {
 			if len(c.operatorStack) == 0 || !firstItem {
 				firstItem = true
 				c.operatorStack = append(c.operatorStack, item)
@@ -67,7 +66,7 @@ func (c *RPN) ConvertToRPN(expStack []string) string {
 					continue
 				}
 
-				for len(c.operatorStack) > 0 && (tokenize.Operators[item] <= tokenize.Operators[c.GetLastOperatorFromStack()]) {
+				for len(c.operatorStack) > 0 && (Operators[item] <= Operators[c.GetLastOperatorFromStack()]) {
 					c.AppendRPNItem(c.GetLastOperatorFromStack())
 					c.PopOperatorFromStack()
 					popLoop = true
@@ -76,7 +75,7 @@ func (c *RPN) ConvertToRPN(expStack []string) string {
 				if popLoop {
 					c.operatorStack = append(c.operatorStack, item)
 					popLoop = false
-				} else if len(c.operatorStack) > 0 && (tokenize.Operators[item] > tokenize.Operators[c.GetLastOperatorFromStack()]) {
+				} else if len(c.operatorStack) > 0 && (Operators[item] > Operators[c.GetLastOperatorFromStack()]) {
 					c.operatorStack = append(c.operatorStack, item)
 				}
 			}
@@ -120,7 +119,7 @@ func (c *RPN) CalculateRPN() float64 {
 	for len(auxStack) > 1 {
 		for i := 0; i < len(auxStack); i++ {
 			item := auxStack[i]
-			if _, found := tokenize.Operators[item]; found {
+			if _, found := Operators[item]; found {
 				value1, err := strconv.ParseFloat(auxStack[i-2], 64)
 				value2, err := strconv.ParseFloat(auxStack[i-1], 64)
 				if err != nil {
@@ -151,7 +150,7 @@ func (c *RPN) CalculateRPN() float64 {
 }
 
 func (c *RPN) CalculateExpression(str string) float64 {
-	tokens, err := tokenize.Tokenize(str)
+	tokens, err := Tokenize(str)
 	if err != nil {
 		fmt.Println(err)
 		return -1

@@ -22,4 +22,3 @@ func main()  {
 		fmt.Println(calc.GetResult())
 	}
 }
-// (-1-1*-1)-1
