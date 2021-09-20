@@ -13,9 +13,21 @@ type RPN struct {
 	result       	float64
 	resultString 	string
 }
+
 // flags for convert to RPN
 var popLoop bool
 var firstItem bool
+
+// Operators precedence for Reverse Polish Notation.
+var Operators = map[string]int {
+	"^": 3,
+	"*": 2,
+	"/": 2,
+	"+": 1,
+	"-": 1,
+	"(": 1,
+	")": 1,
+}
 
 func (c *RPN) GetResult() float64 {
 	return c.result
