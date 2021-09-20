@@ -1,6 +1,7 @@
 package rpn
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -20,6 +21,7 @@ const (
 	exp12 = "(-1*2)^2"
 	exp13 = "(-1*2-60-345)*0"
 	exp14 = "(6*2)/0" // (+Inf)
+	exp15 = "(-1.111111*2-600000.435873987-345.849303)*0.9485833"
 	expErr1 = "(-e5)"
 	expErr2 = "[4-6]*5"
 	expErr3 = "       "
@@ -85,7 +87,7 @@ func TestTokenizeErrors(t *testing.T) {
 	}
 
 	res1 := []string{"(", "-"}
-	res2 := []string([]string(nil))
+	res2 := []string(nil)
 
 	assert.Equal(t, res1, tokens1)
 	assert.Equal(t, err1, st1)
@@ -173,6 +175,11 @@ func TestCalculateRPN(t *testing.T) {
 	c10.ConvertToRPN(tokens10)
 	c10.CalculateRPN()
 
+	c11 := RPN{}
+	tokens11, _ := Tokenize(exp15)
+	c11.ConvertToRPN(tokens11)
+	c11.CalculateRPN()
+
 	assert.Equal(t, c1.GetResult(), 3026.0)
 	assert.Equal(t, c2.GetResult(), 2.9)
 	assert.Equal(t, c3.GetResult(), 82.0)
@@ -182,5 +189,6 @@ func TestCalculateRPN(t *testing.T) {
 	assert.Equal(t, c7.GetResult(), 4.0)
 	assert.Equal(t, c8.GetResult(), 0.0)
 	assert.Equal(t, c9.GetResult(), 0.0) // defer will catch the error and return 0
-	assert.Equal(t, c9.GetResult(), 0.0) // defer will catch the error and return 0 (+Inf Equal 0.0)
+	assert.Equal(t, fmt.Sprint(c10.GetResult()), fmt.Sprint("+Inf")) // defer will catch the error and return 0 (+Inf Equal 0.0)
+	assert.Equal(t, c11.GetResult(), -569480.568299)
 }
