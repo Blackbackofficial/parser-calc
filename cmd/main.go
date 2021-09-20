@@ -1,17 +1,25 @@
 package main
 
 import (
-	"hw/parser-calc/internal/tokenize"
-	"log"
+	"bufio"
+	"fmt"
+	"hw/parser-calc/internal/rpn"
+	"io"
+	"os"
 )
 
 func main()  {
-	log.Println("hello")
-	str := "(1+(25/60)/*2)-3"
-	tokens, err := tokenize.Tokenize(str)
-	if err != nil {
-		log.Println(err)
-	}
+	scan := bufio.NewScanner(io.Reader(os.Stdin))
+	for scan.Scan() {
+		str := scan.Text()
 
-	log.Println(tokens)
+		if str == "exit" {
+			return
+		}
+
+		calc := rpn.RPN{}
+		calc.CalculateExpression(str)
+		fmt.Println(calc.GetResult())
+	}
 }
+// (-1-1*-1)-1

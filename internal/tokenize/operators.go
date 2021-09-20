@@ -1,9 +1,12 @@
 package tokenize
 
-// Operator precedence for Reverse Polish Notation.
-var operators = map[token]int {
-	operator('*'): 2,
-	operator('/'): 2,
-	operator('+'): 1,
-	operator('-'): 1,
+// Operators precedence for Reverse Polish Notation.
+var Operators = map[string]int {
+	"^": 3,
+	"*": 2,
+	"/": 2,
+	"+": 1,
+	"-": 1,
+	"(": 1,
+	")": 1,
 }

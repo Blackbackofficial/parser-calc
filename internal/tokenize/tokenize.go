@@ -2,75 +2,71 @@ package tokenize
 
 import (
 	"regexp"
-	"strconv"
 	"unicode"
 )
-
-// WELCOME TO THOSE COMPILERS WITH THEIR LEXICAL ANALYSIS!
-type token interface {}
-
-type number float64
-
-type operator string
 
 // This regex matches the number and identifier tokens, respectively.
 var numberPattern = regexp.MustCompile(`^(\d+(\.\d*)?|\.\d+?)([eE][-+]?\d+)?`)
 
-// Tokenize breaks an expression into tokens
-func Tokenize(exp string) ([]token, error) {
+var unary = 0
+var start bool
+
+// Tokenize breaks an expression into tokens. WELCOME TO THOSE COMPILERS WITH THEIR LEXICAL ANALYSIS!
+func Tokenize(exp string) ([]string, error) {
 	skip := 0
-	var tokens []token
-	for i, ru := range exp {
-		// previously checked runes
+	start = true
+	var tokens []string
+	for i, r := range exp {
+		// Previously checked runes
 		if skip > 0 {
 			skip--
 			continue
 		}
 
 		// Space
-		if unicode.IsSpace(ru) {
+		if unicode.IsSpace(r) {
+			continue
+		}
+
+		// if first symbol ex: -1-1
+		if start && string(r) == "-" {
+			unary++
+		}
+		start = false
+
+		// Operators
+		if _, found := Operators[string(r)]; found {
+			if string(r) != ")" {
+				unary++
+			}
+			tokens = append(tokens, string(r))
 			continue
 		}
 
 		// Number
-		if  ru == '.' || ru >= '0' && ru <= '9' {
+		if  r == '.' || r >= '0' && r <= '9' {
 			m := numberPattern.FindString(exp[i:])
-			x, err := strconv.ParseFloat(m, 64)
-			if err != nil {
-				return nil, makeError(exp, i, "error in number (%v)", err)
+			if unary == 2 && tokens[len(tokens)-1] == "-" {
+				tokens = tokens[:len(tokens)-1]
+				tokens = append(tokens, "-" + m)
+			} else {
+				tokens = append(tokens, m)
 			}
-			tokens = append(tokens, number(x))
+			unary = 0
 			skip = len([]rune(m)) - 1
 			continue
 		}
 
-		// Operators
-		if _, found := operators[operator(ru)]; found {
-			if ru == '-' || ru == '+' {
-				if len(tokens) == 0 {
-					tokens = append(tokens, operator(ru))
-					continue
-				}
-				switch tokens[len(tokens)-1].(type) {
-				case operator:
-					tokens = append(tokens, operator(ru))
-					continue
-				}
-			}
-			tokens = append(tokens, operator(ru))
-			continue
-		}
-
-		// parenthesis
-		switch ru {
+		// Parenthesis
+		switch r {
 		case '(':
-			tokens = append(tokens, "(")
+			tokens = append(tokens, "(" )
 			continue
 		case ')':
 			tokens = append(tokens, ")")
 			continue
 		default:
-			return nil, makeError(exp, i, "error regx '%c'", ru)
+			return tokens, makeError(exp, i, "error regx '%c'", r)
 		}
 	}
 	return tokens, nil
