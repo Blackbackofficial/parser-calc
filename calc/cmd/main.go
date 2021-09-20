@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"hw/parser-calc/internal/rpn"
+	"hw/parser-calc/calc/internal/rpn"
 	"io"
 	"os"
 )

@@ -74,13 +74,13 @@ func TestTokenizeErrors(t *testing.T) {
 	tokens2, err2 := Tokenize(expErr2)
 	tokens3, _ := Tokenize(expErr3)
 
-	st1 := calcError {
+	st1 := calcError{
 		err: "error regx 'e'",
 		expression: "(-e5)",
 		location: 2,
 	}
 
-	st2 := calcError {
+	st2 := calcError{
 		err: "error regx '['",
 		expression: "[4-6]*5",
 		location: 0,
