@@ -7,8 +7,7 @@ import (
 	"os"
 )
 
-func Unic(params Params)  {
-
+func Uniq(params Params)  {
 	var input, output *os.File
 	defer input.Close()
 	defer output.Close()

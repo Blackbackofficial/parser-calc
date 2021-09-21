@@ -1,8 +1,8 @@
 package rpn
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
+	"math"
 	"testing"
 )
 
@@ -17,16 +17,6 @@ const (
 	exp8 = "(-1)*-1"
 	exp9 = "-1+5*-10"
 	exp10 = "(-1.8+5.9)-1.2"
-	exp11 = "(4 * 21) - (4 / 2)"
-	exp12 = "(-1*2)^2"
-	exp13 = "(-1*2-60-345)*0"
-	exp14 = "(6*2)/0" // (+Inf)
-	exp15 = "(-1.111111*2-600000.435873987-345.849303)*0.9485833"
-	expErr1 = "(-e5)"
-	expErr2 = "[4-6]*5"
-	expErr3 = "       "
-	expErr4 = "-----1++555" // defer will catch the error
-	expErr5 = "(1 + )" // defer will catch the error
 )
 
 func TestTokenizeStandartOperations(t *testing.T) {
@@ -49,146 +39,147 @@ func TestTokenizeStandartOperations(t *testing.T) {
 	assert.Equal(t, res5, tokens5)
 }
 
-func TestTokenizeUnaryOperations(t *testing.T) {
-	tokens6, _ := Tokenize(exp6)
-	tokens7, _ := Tokenize(exp7)
-	tokens8, _ := Tokenize(exp8)
-	tokens9, _ := Tokenize(exp9)
-	tokens10, _ := Tokenize(exp10)
-
-	res6 := []string{"(", "-1", "-", "1", "*", "-1", ")", "-", "1"}
-	res7 := []string{"-9", "-", "8", "-", "7"}
-	res8 := []string{"(", "-1", ")", "*", "-1"}
-	res9 := []string{"-1", "+", "5", "*", "-10"}
-	res10 := []string{"(", "-1.8", "+", "5.9", ")", "-", "1.2"}
-
-	assert.Equal(t, res6, tokens6)
-	assert.Equal(t, res7, tokens7)
-	assert.Equal(t, res8, tokens8)
-	assert.Equal(t, res9, tokens9)
-	assert.Equal(t, res10, tokens10)
-}
-
-func TestTokenizeErrors(t *testing.T) {
-	tokens1, err1 := Tokenize(expErr1)
-	tokens2, err2 := Tokenize(expErr2)
-	tokens3, _ := Tokenize(expErr3)
-
-	st1 := calcError{
-		err: "error regx 'e'",
-		expression: "(-e5)",
-		location: 2,
+func TestConvertToRPNAndCalculateRPN(t *testing.T) {
+	testCases := []struct {
+		name        		string
+		tokensCheck		 	bool
+		input     			string
+		tokens				[]string
+		errTokens 			calcError
+		rpnExpression 		string	// The ConvertToRPN function returns no errors, only CalculateRPN returns!
+		result 				float64
+	} {
+		{
+			name:        	"Valid token (-1.8+5.9)-1.2",
+			tokensCheck: 	false,
+			input:       	"(-1.8+5.9)-1.2",
+			tokens: 		[]string{"(", "-1.8", "+", "5.9", ")", "-", "1.2"},
+		}, {
+			name:        	"Valid token -1+5*-10",
+			tokensCheck: 	false,
+			input:       	"-1+5*-10",
+			tokens: 		[]string{"-1", "+", "5", "*", "-10"},
+		}, {
+			name:        	"Valid token (-1)*-1",
+			tokensCheck: 	false,
+			input:       	"(-1)*-1",
+			tokens: 		[]string{"(", "-1", ")", "*", "-1"},
+		}, {
+			name:        	"Valid token -9-8-7",
+			tokensCheck: 	false,
+			input:       	"-9-8-7",
+			tokens: 		[]string{"-9", "-", "8", "-", "7"},
+		}, {
+			name:        	"Valid token (-1-1*-1)-1",
+			tokensCheck: 	false,
+			input:       	"(-1-1*-1)-1",
+			tokens: 		[]string{"(", "-1", "-", "1", "*", "-1", ")", "-", "1"},
+		}, {
+			name:        	"Invalid space",
+			tokensCheck: 	false,
+			input:       	"       ",
+			tokens: 		[]string(nil),
+		}, {
+			name:        	"Invalid (-e5)",
+			tokensCheck: 	false,
+			input:       	"(-e5)",
+			tokens: 		[]string{"(", "-"},
+			errTokens: 		calcError{err: "error regx 'e'", expression: "(-e5)", location: 2},
+		}, {
+			name:        	"valid [4-6]*5",
+			tokensCheck: 	false,
+			input:       	"[4-6]*5",
+			tokens: 		[]string(nil),
+			errTokens: 		calcError {err: "error regx '['", expression: "[4-6]*5", location: 0},
+		}, {
+			name:        	"valid 89*34",
+			tokensCheck: 	true,
+			input:       	"89*34",
+			rpnExpression: 	"89 34 * ",
+			result: 		3026.0,
+		}, {
+			name:        	"valid (-1.8+5.9)-1.2",
+			tokensCheck: 	true,
+			input:       	"(-1.8+5.9)-1.2",
+			rpnExpression: 	"-1.8 5.9 + 1.2 - ",
+			result: 		2.9,
+		}, {
+			name:        	"valid 4 * 21) - (4 / 2)",
+			tokensCheck: 	true,
+			input:       	"(4 * 21) - (4 / 2)",
+			rpnExpression: 	"4 21 * 4 2 / - ",
+			result: 		82.0,
+		}, {
+			name:        	"invalid -----1++555",
+			tokensCheck: 	true,
+			input:       	"-----1++555",
+			rpnExpression: 	"- - - - 1 - + 555 + ",
+			result: 		0.0,
+		}, {
+			name:        	"valid 60-50*2^2",
+			tokensCheck: 	true,
+			input:       	"60-50*2^2",
+			rpnExpression: 	"60 50 2 2 ^ * - ",
+			result: 		-140.0,
+		}, {
+			name:       	"valid (-1-1*-1)-1",
+			tokensCheck: 	true,
+			input:       	"(-1-1*-1)-1",
+			rpnExpression: 	"-1 1 -1 * - 1 - ",
+			result: 		-1.0,
+		}, {
+			name:        	"invalid (-1*2)^2",
+			tokensCheck: 	true,
+			input:       	"(-1*2)^2",
+			rpnExpression: 	"-1 2 * 2 ^ ",
+			result: 		4.0,
+		},
+		{
+			name:        	"invalid (-1*2-60-345)*0",
+			tokensCheck: 	true,
+			input:       	"(-1*2-60-345)*0",
+			rpnExpression:	"-1 2 * 60 - 345 - 0 * ",
+			result: 		0.0,
+		},
+		{
+			name:        	"invalid (1 + )",
+			tokensCheck: 	true,
+			input:       	"(1 + )",
+			rpnExpression: 	"1 + ",
+			result: 		0.0,
+		},
+		{
+			name:        	"invalid (6*2)/0",
+			tokensCheck: 	true,
+			input:       	"(6*2)/0", // (+Inf)
+			rpnExpression: 	"6 2 * 0 / ",
+			result: 		math.Inf(1),
+		},
+		{
+			name:        	"valid (-1.111111*2-600000.435873987-345.849303)*0.9485833",
+			tokensCheck: 	true,
+			input:       	"(-1.111111*2-600000.435873987-345.849303)*0.9485833",
+			rpnExpression: 	"-1.111111 2 * 600000.435873987 - 345.849303 - 0.9485833 * ",
+			result: 		-569480.568299,
+		},
 	}
 
-	st2 := calcError{
-		err: "error regx '['",
-		expression: "[4-6]*5",
-		location: 0,
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.tokensCheck {
+				c := RPN{}
+				token, _ := Tokenize(tc.input)
+				c.ConvertToRPN(token)
+				c.CalculateRPN()
+				assert.Equal(t, c.rpnExpression, tc.rpnExpression)
+				assert.Equal(t, c.GetResult(), tc.result)
+			} else {
+				tokens, err := Tokenize(tc.input)
+				assert.Equal(t, tokens, tc.tokens)
+				if err != nil {
+					assert.Equal(t, err, tc.errTokens)
+				}
+			}
+		})
 	}
-
-	res1 := []string{"(", "-"}
-	res2 := []string(nil)
-
-	assert.Equal(t, res1, tokens1)
-	assert.Equal(t, err1, st1)
-	assert.Equal(t, res2, tokens2)
-	assert.Equal(t, res2, tokens3)
-	assert.Equal(t, err2, st2)
-}
-
-// The ConvertToRPN function returns no errors, only CalculateRPN returns!
-func TestConvertToRPN(t *testing.T) {
-	c1 := RPN{}
-	tokens1, _ := Tokenize(exp1)
-	c1.ConvertToRPN(tokens1)
-	res1 := "89 34 * "
-
-	c2 := RPN{}
-	tokens2, _ := Tokenize(exp10)
-	c2.ConvertToRPN(tokens2)
-	res2 := "-1.8 5.9 + 1.2 - "
-
-	c3 := RPN{}
-	tokens3, _ := Tokenize(exp11)
-	c3.ConvertToRPN(tokens3)
-	res3 := "4 21 * 4 2 / - "
-
-	c4 := RPN{}
-	tokens4, _ := Tokenize(expErr4)
-	c4.ConvertToRPN(tokens4)
-	res4 := "- - - - 1 - + 555 + " // as it should
-
-	assert.Equal(t, c1.rpnExpression, res1)
-	assert.Equal(t, c2.rpnExpression, res2)
-	assert.Equal(t, c3.rpnExpression, res3)
-	assert.Equal(t, c4.rpnExpression, res4)
-}
-
-func TestCalculateRPN(t *testing.T) {
-	c1 := RPN{}
-	tokens1, _ := Tokenize(exp1)
-	c1.ConvertToRPN(tokens1)
-	c1.CalculateRPN()
-
-	c2 := RPN{}
-	tokens2, _ := Tokenize(exp10)
-	c2.ConvertToRPN(tokens2)
-	c2.CalculateRPN()
-
-	c3 := RPN{}
-	tokens3, _ := Tokenize(exp11)
-	c3.ConvertToRPN(tokens3)
-	c3.CalculateRPN()
-
-	c4 := RPN{}
-	tokens4, _ := Tokenize(expErr4)
-	c4.ConvertToRPN(tokens4)
-	c4.CalculateRPN()
-
-	c5 := RPN{}
-	tokens5, _ := Tokenize(exp4)
-	c5.ConvertToRPN(tokens5)
-	c5.CalculateRPN()
-
-	c6 := RPN{}
-	tokens6, _ := Tokenize(exp6)
-	c6.ConvertToRPN(tokens6)
-	c6.CalculateRPN()
-
-	c7 := RPN{}
-	tokens7, _ := Tokenize(exp12)
-	c7.ConvertToRPN(tokens7)
-	c7.CalculateRPN()
-
-	c8 := RPN{}
-	tokens8, _ := Tokenize(exp13)
-	c8.ConvertToRPN(tokens8)
-	c8.CalculateRPN()
-
-	c9 := RPN{}
-	tokens9, _ := Tokenize(expErr5)
-	c9.ConvertToRPN(tokens9)
-	c9.CalculateRPN()
-
-	c10 := RPN{}
-	tokens10, _ := Tokenize(exp14)
-	c10.ConvertToRPN(tokens10)
-	c10.CalculateRPN()
-
-	c11 := RPN{}
-	tokens11, _ := Tokenize(exp15)
-	c11.ConvertToRPN(tokens11)
-	c11.CalculateRPN()
-
-	assert.Equal(t, c1.GetResult(), 3026.0)
-	assert.Equal(t, c2.GetResult(), 2.9)
-	assert.Equal(t, c3.GetResult(), 82.0)
-	assert.Equal(t, c4.GetResult(), 0.0)
-	assert.Equal(t, c5.GetResult(), -140.0)
-	assert.Equal(t, c6.GetResult(), -1.0)
-	assert.Equal(t, c7.GetResult(), 4.0)
-	assert.Equal(t, c8.GetResult(), 0.0)
-	assert.Equal(t, c9.GetResult(), 0.0) // defer will catch the error and return 0
-	assert.Equal(t, fmt.Sprint(c10.GetResult()), fmt.Sprint("+Inf")) // defer will catch the error and return 0 (+Inf Equal 0.0)
-	assert.Equal(t, c11.GetResult(), -569480.568299)
 }
