@@ -12,11 +12,6 @@ const (
 	exp3 = "(36 + 1)/ 10"
 	exp4 = "60-50*2^2"
 	exp5 = "((3*34+5)*1)/1"
-	exp6 = "(-1-1*-1)-1"
-	exp7 = "-9-8-7"
-	exp8 = "(-1)*-1"
-	exp9 = "-1+5*-10"
-	exp10 = "(-1.8+5.9)-1.2"
 )
 
 func TestTokenizeStandartOperations(t *testing.T) {
