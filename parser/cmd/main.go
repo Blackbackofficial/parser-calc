@@ -10,7 +10,5 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println(params)
 	internal.Uniq(params)
-
 }
