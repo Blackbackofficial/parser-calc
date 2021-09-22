@@ -25,8 +25,8 @@ var Operators = map[string]int {
 	"/": 2,
 	"+": 1,
 	"-": 1,
-	"(": 1,
-	")": 1,
+	"(": 0,
+	")": 0,
 }
 
 func (c *RPN) GetResult() float64 {
@@ -100,7 +100,6 @@ func (c *RPN) ConvertToRPN(expStack []string) string {
 		c.AppendRPNItem(c.GetLastOperatorFromStack())
 		c.PopOperatorFromStack()
 	}
-	fmt.Println(c.rpnExpression)
 	return c.rpnExpression
 }
 

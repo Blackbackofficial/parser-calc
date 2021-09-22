@@ -72,7 +72,6 @@ func StartFlags(str string, params Params) string {
 		def := Default(line, params)
 		return convert(def)
 	}
-	return ""
 }
 
 func convert(arr []string) string {

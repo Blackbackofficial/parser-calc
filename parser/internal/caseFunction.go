@@ -34,13 +34,13 @@ func cUnique(str []string, params Params) []string {
 }
 
 func dRepeated(str []string, params Params) []string {
-	var dUniq []string
+	var dRepeat []string
 	var last string
 	var repeat bool
 	for _, v := range str {
 		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
 			if !repeat {
-				dUniq = append(dUniq, v)
+				dRepeat = append(dRepeat, v)
 				repeat = true
 			}
 		} else {
@@ -48,7 +48,7 @@ func dRepeated(str []string, params Params) []string {
 		}
 		last = v
 	}
-	return dUniq
+	return dRepeat
 }
 
 func uUnique(str []string, params Params) []string {
