@@ -22,7 +22,7 @@ func SearchParams() (Params, error) {
 		"the -f option, the first characters after the num_fields fields are counted (excluding the space separator after the last field).")
 	flag.Parse()
 
-	if !((f.C && !f.D && !f.U) || (!f.C && f.D && !f.U) || (!f.C && !f.D && f.U)) {
+	if !((f.C && !f.D && !f.U) || (!f.C && f.D && !f.U) || (!f.C && !f.D && f.U))  {
 		flag.Usage()
 		return f, errors.New("incorrect flag")
 	}

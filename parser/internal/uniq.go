@@ -23,7 +23,9 @@ func Uniq(params Params)  {
 		if err != nil {
 			log.Fatalln(err)
 		}
+
 		defer in.Close()
+
 		buf := new(bytes.Buffer)
 		_, err = buf.ReadFrom(in)
 		if err != nil {
@@ -58,14 +60,17 @@ func StartFlags(str string, params Params) string {
 	line = append(line, strings.Split(str, "\n")...)
 
 	if params.C {
-
+		cUniq := cUnique(line, params)
+		return convert(cUniq)
 	} else if params.D {
-
-	} else if params.U {
-		uniq := Unique(line, params)
+		uniq := dRepeated(line, params)
 		return convert(uniq)
+	} else if params.U {
+		uUniq := uUnique(line, params)
+		return convert(uUniq)
 	} else {
-
+		def := Default(line, params)
+		return convert(def)
 	}
 	return ""
 }
