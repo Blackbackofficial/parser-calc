@@ -1,7 +1,7 @@
 package main
 
 import (
-	"hw/parser-calc/parser/internal"
+	"hw/parser-calc/uniq/internal"
 	"log"
 )
 
