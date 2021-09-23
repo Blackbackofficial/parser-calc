@@ -11,6 +11,7 @@ type Params struct {
 	InputFile, OutputFile string
 }
 
+// SearchParams find flags
 func SearchParams() (Params, error) {
 	f := Params{}
 	flag.BoolVar(&f.C,"c", false, "Count the number of occurrences of lines in the input. Print this number before the line, separated by a space.")

@@ -9,6 +9,7 @@ type CountU struct {
 	num		int
 }
 
+// Flag -c && -i
 func cUnique(str []string, params Params) []CountU {
 	var count int
 	var cUniq []CountU
@@ -33,6 +34,7 @@ func cUnique(str []string, params Params) []CountU {
 	return cUniq
 }
 
+// Flag -d && -i
 func dRepeated(str []string, params Params) []int {
 	var dPosition []int
 	var last string
@@ -51,6 +53,7 @@ func dRepeated(str []string, params Params) []int {
 	return dPosition
 }
 
+// Flag -u && -i
 func uUnique(str []string, params Params) []int {
 	var uPosition []int
 	var last string
@@ -71,7 +74,8 @@ func uUnique(str []string, params Params) []int {
 	return uPosition
 }
 
-func Default(str []string, params Params) []int {
+// No flags -> default
+func defaultF(str []string, params Params) []int {
 	var position []int
 	var last string
 	for k, v := range str {

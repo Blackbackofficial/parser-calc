@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Uniq starting the utility
 func Uniq(params Params)  {
 	var str, read string
 
@@ -18,7 +19,7 @@ func Uniq(params Params)  {
 		for sc.Scan() {
 			read += sc.Text() +"\n"
 		}
-		str = StartFlags(read, params)
+		str = startFlags(read, params)
 	} else {
 		in, err := os.Open(params.InputFile)
 		if err != nil {
@@ -32,7 +33,7 @@ func Uniq(params Params)  {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		str = StartFlags(buf.String(), params)
+		str = startFlags(buf.String(), params)
 	}
 
 	if len(params.OutputFile) == 0 {
@@ -56,7 +57,8 @@ func Uniq(params Params)  {
 	}
 }
 
-func StartFlags(str string, params Params) string {
+// See which flags are active
+func startFlags(str string, params Params) string {
 	var line []string
 	line = append(line, strings.Split(str, "\n")...)
 
@@ -70,12 +72,12 @@ func StartFlags(str string, params Params) string {
 		uUniq := uUnique(line, params)
 		return convert(line, uUniq)
 	} else {
-		def := Default(line, params)
+		def := defaultF(line, params)
 		return convert(line, def)
 	}
-	return ""
 }
 
+// String summation
 func convert(str []string, arr []int) string {
 	var out string
 	for _, v := range arr {
@@ -84,6 +86,7 @@ func convert(str []string, arr []int) string {
 	return out
 }
 
+// String summation with position
 func convertCount(str []string, arr []CountU) string {
 	var out string
 	for _, v := range arr {
