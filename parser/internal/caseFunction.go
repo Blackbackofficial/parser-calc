@@ -100,6 +100,27 @@ func cutStrF(arrStr []string, numField int) []string {
 	return newSlice
 }
 
+// Flag -s
+func cutCharS(arrStr []string, numChar int) []string {
+	if numChar < 0  {
+		log.Fatalln("Incorrect num field")
+	}
+
+	var newSlice []string
+	for _, v := range arrStr {
+		var str string
+		s := strings.Split(v, "")
+		for k, v := range s {
+			if k < numChar || v == ""{
+				continue
+			}
+			str += v
+		}
+		newSlice = append(newSlice, str)
+	}
+	return newSlice
+}
+
 // No flags -> default
 func defaultF(arrStr []string, params Params) []int {
 	var position []int

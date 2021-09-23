@@ -62,10 +62,19 @@ func startFlags(str string, params Params) string {
 	var line, newSlice []string
 	line = append(line, strings.Split(str, "\n")...)
 
+	// flags -f, -s
 	if params.NumFields != 0 {
 		newSlice = cutStrF(line, params.NumFields)
 	}
+	if params.NumChars != 0 {
+		if params.NumFields != 0 {
+			newSlice = cutCharS(newSlice, params.NumChars)
+		} else {
+			newSlice = cutCharS(line, params.NumChars)
+		}
+	}
 
+	// flags -c, -d, -u
 	if params.C {
 		var cUniq []CountU
 		if len(newSlice) == 0 {
