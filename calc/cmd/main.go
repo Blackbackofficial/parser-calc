@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hw/parser-calc/calc/internal/rpn"
 	"io"
+	"log"
 	"os"
 )
 
@@ -18,7 +19,10 @@ func main()  {
 		}
 
 		calc := rpn.RPN{}
-		calc.CalculateExpression(str)
+		_, err := calc.CalculateExpression(str)
+		if err != nil {
+			log.Println(err)
+		}
 		fmt.Println(calc.GetResult())
 	}
 }

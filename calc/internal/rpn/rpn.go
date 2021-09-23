@@ -1,6 +1,7 @@
 package rpn
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"strconv"
@@ -54,7 +55,7 @@ func (c *RPN) PopOperatorFromStack() []string {
 	return c.operatorStack
 }
 
-func (c *RPN) ConvertToRPN(expStack []string) string {
+func (c *RPN) ConvertToRPN(expStack []string) {
 	for i := range expStack {
 		item := expStack[i]
 		if _, found := Operators[item]; found {
@@ -100,7 +101,6 @@ func (c *RPN) ConvertToRPN(expStack []string) string {
 		c.AppendRPNItem(c.GetLastOperatorFromStack())
 		c.PopOperatorFromStack()
 	}
-	return c.rpnExpression
 }
 
 func (c *RPN) SimpleCalculate(val1 float64, val2 float64, operator string) float64 {
@@ -120,7 +120,7 @@ func (c *RPN) SimpleCalculate(val1 float64, val2 float64, operator string) float
 	return auxResult
 }
 
-func (c *RPN) CalculateRPN() float64 {
+func (c *RPN) CalculateRPN() (float64, error) {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println("Invalid RPN")
@@ -129,6 +129,9 @@ func (c *RPN) CalculateRPN() float64 {
 	auxStack := c.rpnStack
 	for len(auxStack) > 1 {
 		for i := 0; i < len(auxStack); i++ {
+			if _, found := Operators[auxStack[len(auxStack) - 1]]; !found {
+				return -1, errors.New("Invalid operator")
+			}
 			item := auxStack[i]
 			if _, found := Operators[item]; found {
 				value1, err := strconv.ParseFloat(auxStack[i-2], 64)
@@ -158,18 +161,20 @@ func (c *RPN) CalculateRPN() float64 {
 		}
 		c.resultString = auxStack[0]
 		c.result = auxResult
-		return c.result
+		return c.result, nil
 	}
-	return -1
+	return -1, nil
 }
 
-func (c *RPN) CalculateExpression(str string) float64 {
+func (c *RPN) CalculateExpression(str string) (float64, error) {
 	tokens, err := Tokenize(str)
 	if err != nil {
-		fmt.Println(err)
-		return -1
+		return -1, err
 	}
 	c.ConvertToRPN(tokens)
-	c.CalculateRPN()
-	return c.result
+	_, err = c.CalculateRPN()
+	if err != nil {
+		return -1, err
+	}
+	return c.result, nil
 }

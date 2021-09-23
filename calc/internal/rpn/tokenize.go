@@ -1,11 +1,11 @@
 package rpn
 
 import (
+	"errors"
 	"regexp"
 	"unicode"
 )
 
-var unary int
 var start bool
 
 // This regex matches the number and identifier tokens, respectively.
@@ -15,9 +15,18 @@ var numberPattern = regexp.MustCompile(`^(\d+(\.\d*)?|\.\d+?)([eE][-+]?\d+)?`)
 func Tokenize(exp string) ([]string, error) {
 	skip := 0
 	start = true
-	unary = 0 // MUST!
+	var unary int// MUST!
 	var tokens []string
+	var parenthesis int
 	for i, r := range exp {
+		if string(r) == "(" {
+			parenthesis++
+		} else if string(r) == ")" {
+			parenthesis--
+		}
+		if parenthesis < 0 {
+			return tokens, errors.New("Invalid in parenthesis")
+		}
 		// Previously checked runes
 		if skip > 0 {
 			skip--
