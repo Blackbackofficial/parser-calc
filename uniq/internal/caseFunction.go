@@ -120,10 +120,12 @@ func cutCharS(arrStr []string, numChar int) []string {
 func defaultF(arrStr []string, params Params) []int {
 	var position []int
 	var last string
+	var first bool
 	for k, v := range arrStr {
-		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
+		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) && first { // flag -i
 			continue
 		}
+		first = true
 		position = append(position, k)
 		last = v
 	}
