@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"log"
 	"strings"
 )
 
@@ -10,11 +11,11 @@ type CountU struct {
 }
 
 // Flag -c && -i
-func cUnique(str []string, params Params) []CountU {
+func cUnique(arrStr []string, params Params) []CountU {
 	var count int
 	var cUniq []CountU
 	var last string
-	for k, v := range str {
+	for k, v := range arrStr {
 		if count == 0 {
 			count++
 			countU := CountU { count: count, num: k }
@@ -35,11 +36,11 @@ func cUnique(str []string, params Params) []CountU {
 }
 
 // Flag -d && -i
-func dRepeated(str []string, params Params) []int {
+func dRepeated(arrStr []string, params Params) []int {
 	var dPosition []int
 	var last string
 	var repeat bool
-	for k, v := range str {
+	for k, v := range arrStr {
 		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
 			if !repeat {
 				dPosition = append(dPosition, k)
@@ -54,12 +55,12 @@ func dRepeated(str []string, params Params) []int {
 }
 
 // Flag -u && -i
-func uUnique(str []string, params Params) []int {
+func uUnique(arrStr []string, params Params) []int {
 	var uPosition []int
 	var last string
 	var repeat bool
 	var first bool
-	for k, v := range str {
+	for k, v := range arrStr {
 		if !((params.I && strings.EqualFold(last, v)) || (!params.I && last == v)) && first { // flag -i
 			if !repeat {
 				uPosition = append(uPosition, k)
@@ -74,11 +75,36 @@ func uUnique(str []string, params Params) []int {
 	return uPosition
 }
 
+// Flag -f
+func cutStrF(arrStr []string, numField int) []string {
+	if numField < 0  {
+		log.Fatalln("Incorrect num field")
+	}
+
+	var newSlice []string
+	for _, v := range arrStr {
+		var str string
+		s := strings.Split(v, " ")
+		for k, v := range s {
+			if k < numField || v == ""{
+				continue
+			}
+			if len(s)-1 == k {
+				str += v
+			} else {
+				str += v + " "
+			}
+		}
+		newSlice = append(newSlice, str)
+	}
+	return newSlice
+}
+
 // No flags -> default
-func defaultF(str []string, params Params) []int {
+func defaultF(arrStr []string, params Params) []int {
 	var position []int
 	var last string
-	for k, v := range str {
+	for k, v := range arrStr {
 		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
 			continue
 		}

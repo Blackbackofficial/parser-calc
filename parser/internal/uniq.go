@@ -16,7 +16,7 @@ func Uniq(params Params)  {
 
 	if len(params.InputFile) == 0 {
 		sc := bufio.NewScanner(os.Stdin)
-		for sc.Scan() {
+		for sc.Scan() { // stop CTRL+D || control+D
 			read += sc.Text() +"\n"
 		}
 		str = startFlags(read, params)
@@ -59,20 +59,44 @@ func Uniq(params Params)  {
 
 // See which flags are active
 func startFlags(str string, params Params) string {
-	var line []string
+	var line, newSlice []string
 	line = append(line, strings.Split(str, "\n")...)
 
+	if params.NumFields != 0 {
+		newSlice = cutStrF(line, params.NumFields)
+	}
+
 	if params.C {
-		cUniq := cUnique(line, params)
+		var cUniq []CountU
+		if len(newSlice) == 0 {
+			cUniq = cUnique(line, params)
+		} else {
+			cUniq = cUnique(newSlice, params)
+		}
 		return convertCount(line, cUniq)
 	} else if params.D {
-		uniq := dRepeated(line, params)
+		var uniq []int
+		if len(newSlice) == 0 {
+			uniq = dRepeated(line, params)
+		} else {
+			uniq = dRepeated(newSlice, params)
+		}
 		return convert(line, uniq)
 	} else if params.U {
-		uUniq := uUnique(line, params)
+		var uUniq []int
+		if len(newSlice) == 0 {
+			uUniq = uUnique(line, params)
+		} else {
+			uUniq = uUnique(newSlice, params)
+		}
 		return convert(line, uUniq)
 	} else {
-		def := defaultF(line, params)
+		var def []int
+		if len(newSlice) == 0 {
+			def = defaultF(line, params)
+		} else {
+			def = defaultF(newSlice, params)
+		}
 		return convert(line, def)
 	}
 }

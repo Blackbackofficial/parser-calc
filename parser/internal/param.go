@@ -7,7 +7,7 @@ import (
 
 type Params struct {
 	C, D, U, I		      bool
-	NumFields, NumChars   int64
+	NumFields, NumChars   int
 	InputFile, OutputFile string
 }
 
@@ -18,8 +18,8 @@ func SearchParams() (Params, error) {
 	flag.BoolVar(&f.D, "d", false, "Print only those lines that were repeated in the input data.")
 	flag.BoolVar(&f.U, "u", false, "Print only those lines that have not been repeated in the input data.")
 	flag.BoolVar(&f.I, "i", false, "Not case sensitive.")
-	flag.Int64Var(&f.NumFields, "f", 0, "Ignore the first num_fields fields in the line. A field in a string is a non-empty character set separated by a space.")
-	flag.Int64Var(&f.NumChars, "s", 0, "Ignore the first num_chars characters in the string. When used in conjunction with " +
+	flag.IntVar(&f.NumFields, "f", 0, "Ignore the first num_fields fields in the line. A field in a string is a non-empty character set separated by a space.")
+	flag.IntVar(&f.NumChars, "s", 0, "Ignore the first num_chars characters in the string. When used in conjunction with " +
 		"the -f option, the first characters after the num_fields fields are counted (excluding the space separator after the last field).")
 	flag.Parse()
 
