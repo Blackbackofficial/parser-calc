@@ -5,11 +5,11 @@ import (
 	"unicode"
 )
 
-// This regex matches the number and identifier tokens, respectively.
-var numberPattern = regexp.MustCompile(`^(\d+(\.\d*)?|\.\d+?)([eE][-+]?\d+)?`)
-
 var unary int
 var start bool
+
+// This regex matches the number and identifier tokens, respectively.
+var numberPattern = regexp.MustCompile(`^(\d+(\.\d*)?|\.\d+?)([eE][-+]?\d+)?`)
 
 // Tokenize breaks an expression into tokens. WELCOME TO THOSE COMPILERS WITH THEIR LEXICAL ANALYSIS!
 func Tokenize(exp string) ([]string, error) {
