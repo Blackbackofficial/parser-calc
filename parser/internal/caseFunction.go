@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"regexp"
 	"strings"
 )
 
@@ -9,8 +8,6 @@ type CountU struct {
 	count 	int
 	num		int
 }
-
-var r = regexp.MustCompile(`^[\d]+`)
 
 func cUnique(str []string, params Params) []CountU {
 	var count int
@@ -24,8 +21,6 @@ func cUnique(str []string, params Params) []CountU {
 		} else {
 			if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
 				count++
-				//i := r.FindStringSubmatch(cUniq[len(cUniq)-1])[0]
-				//split := cUniq[len(cUniq)-1][utf8.RuneCountInString(i)+1:]
 				cUniq[len(cUniq)-1].count += 1
 			} else {
 				count = 1

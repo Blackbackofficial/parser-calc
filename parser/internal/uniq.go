@@ -3,7 +3,6 @@ package internal
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -12,17 +11,14 @@ import (
 )
 
 func Uniq(params Params)  {
-	var str string
-	var stdin string
+	var str, read string
 
 	if len(params.InputFile) == 0 {
-		// TODO: переделать
 		sc := bufio.NewScanner(os.Stdin)
 		for sc.Scan() {
-			stdin += sc.Text()
+			read += sc.Text() +"\n"
 		}
-
-		fmt.Println(stdin)
+		str = StartFlags(read, params)
 	} else {
 		in, err := os.Open(params.InputFile)
 		if err != nil {
