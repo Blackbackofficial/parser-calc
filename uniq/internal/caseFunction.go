@@ -24,7 +24,6 @@ func cUnique(arrStr []string, params Params) []CountU {
 			countU := CountU { count: count, num: k }
 			cUniq = append(cUniq, countU)
 		}
-
 		last = v
 	}
 	return cUniq
@@ -97,10 +96,6 @@ func cutStrF(arrStr []string, numField int) []string {
 
 // Flag -s
 func cutCharS(arrStr []string, numChar int) []string {
-	if numChar < 0  {
-		log.Fatalln("Incorrect num field")
-	}
-
 	var newSlice []string
 	for _, v := range arrStr {
 		var str string

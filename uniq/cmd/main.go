@@ -10,5 +10,11 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	internal.Uniq(params)
+	if params.NumChars < 0 || params.NumFields < 0 {
+		log.Fatalln("Incorrect num/char field")
+	}
+	err = internal.Uniq(params)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
