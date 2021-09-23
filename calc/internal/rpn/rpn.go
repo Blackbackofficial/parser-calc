@@ -132,6 +132,9 @@ func (c *RPN) CalculateRPN() float64 {
 			item := auxStack[i]
 			if _, found := Operators[item]; found {
 				value1, err := strconv.ParseFloat(auxStack[i-2], 64)
+				if err != nil {
+					fmt.Printf("Error value1 as %s", auxStack[i-1])
+				}
 				value2, err := strconv.ParseFloat(auxStack[i-1], 64)
 				if err != nil {
 					fmt.Printf("Error value1 as %s", auxStack[i-1])
