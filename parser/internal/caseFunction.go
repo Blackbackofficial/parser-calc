@@ -2,30 +2,35 @@ package internal
 
 import (
 	"regexp"
-	"strconv"
 	"strings"
-	"unicode/utf8"
 )
+
+type CountU struct {
+	count 	int
+	num		int
+}
 
 var r = regexp.MustCompile(`^[\d]+`)
 
-func cUnique(str []string, params Params) []string {
+func cUnique(str []string, params Params) []CountU {
 	var count int
-	var cUniq []string
+	var cUniq []CountU
 	var last string
-	for _, v := range str {
+	for k, v := range str {
 		if count == 0 {
 			count++
-			cUniq = append(cUniq, strconv.Itoa(count)+" "+v)
+			countU := CountU { count: count, num: k }
+			cUniq = append(cUniq, countU)
 		} else {
 			if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
 				count++
-				i := r.FindStringSubmatch(cUniq[len(cUniq)-1])[0]
-				split := cUniq[len(cUniq)-1][utf8.RuneCountInString(i)+1:]
-				cUniq[len(cUniq)-1] = strconv.Itoa(count)+" "+split
+				//i := r.FindStringSubmatch(cUniq[len(cUniq)-1])[0]
+				//split := cUniq[len(cUniq)-1][utf8.RuneCountInString(i)+1:]
+				cUniq[len(cUniq)-1].count += 1
 			} else {
 				count = 1
-				cUniq = append(cUniq, strconv.Itoa(count)+" "+v)
+				countU := CountU { count: count, num: k }
+				cUniq = append(cUniq, countU)
 			}
 		}
 		last = v
@@ -33,14 +38,14 @@ func cUnique(str []string, params Params) []string {
 	return cUniq
 }
 
-func dRepeated(str []string, params Params) []string {
-	var dRepeat []string
+func dRepeated(str []string, params Params) []int {
+	var dPosition []int
 	var last string
 	var repeat bool
-	for _, v := range str {
+	for k, v := range str {
 		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
 			if !repeat {
-				dRepeat = append(dRepeat, v)
+				dPosition = append(dPosition, k)
 				repeat = true
 			}
 		} else {
@@ -48,18 +53,18 @@ func dRepeated(str []string, params Params) []string {
 		}
 		last = v
 	}
-	return dRepeat
+	return dPosition
 }
 
-func uUnique(str []string, params Params) []string {
-	var uUniq []string
+func uUnique(str []string, params Params) []int {
+	var uPosition []int
 	var last string
 	var repeat bool
 	var first bool
-	for _, v := range str {
+	for k, v := range str {
 		if !((params.I && strings.EqualFold(last, v)) || (!params.I && last == v)) && first { // flag -i
 			if !repeat {
-				uUniq = append(uUniq, v)
+				uPosition = append(uPosition, k)
 				repeat = true
 			}
 		} else {
@@ -68,18 +73,18 @@ func uUnique(str []string, params Params) []string {
 		last = v
 		first = true
 	}
-	return uUniq
+	return uPosition
 }
 
-func Default(str []string, params Params) []string {
-	var def []string
+func Default(str []string, params Params) []int {
+	var position []int
 	var last string
-	for _, v := range str {
+	for k, v := range str {
 		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
 			continue
 		}
-		def = append(def, v)
+		position = append(position, k)
 		last = v
 	}
-	return def
+	return position
 }

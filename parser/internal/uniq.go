@@ -3,21 +3,26 @@ package internal
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
 func Uniq(params Params)  {
 	var str string
+	var stdin string
 
 	if len(params.InputFile) == 0 {
 		// TODO: переделать
-		scan := bufio.NewScanner(io.Reader(os.Stdin))
-		for scan.Scan() {
-			str = StartFlags(scan.Text(), params)
+		sc := bufio.NewScanner(os.Stdin)
+		for sc.Scan() {
+			stdin += sc.Text()
 		}
+
+		fmt.Println(stdin)
 	} else {
 		in, err := os.Open(params.InputFile)
 		if err != nil {
@@ -61,23 +66,32 @@ func StartFlags(str string, params Params) string {
 
 	if params.C {
 		cUniq := cUnique(line, params)
-		return convert(cUniq)
+		return convertCount(line, cUniq)
 	} else if params.D {
 		uniq := dRepeated(line, params)
-		return convert(uniq)
+		return convert(line, uniq)
 	} else if params.U {
 		uUniq := uUnique(line, params)
-		return convert(uUniq)
+		return convert(line, uUniq)
 	} else {
 		def := Default(line, params)
-		return convert(def)
+		return convert(line, def)
 	}
+	return ""
 }
 
-func convert(arr []string) string {
+func convert(str []string, arr []int) string {
 	var out string
 	for _, v := range arr {
-		out += v + "\n"
+		out += str[v] + "\n"
+	}
+	return out
+}
+
+func convertCount(str []string, arr []CountU) string {
+	var out string
+	for _, v := range arr {
+		out += strconv.Itoa(v.count)+" "+str[v.num]+"\n"
 	}
 	return out
 }
