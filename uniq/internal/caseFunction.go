@@ -16,20 +16,15 @@ func cUnique(arrStr []string, params Params) []CountU {
 	var cUniq []CountU
 	var last string
 	for k, v := range arrStr {
-		if count == 0 {
+		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
 			count++
+			cUniq[len(cUniq)-1].count += 1
+		} else {
+			count = 1
 			countU := CountU { count: count, num: k }
 			cUniq = append(cUniq, countU)
-		} else {
-			if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
-				count++
-				cUniq[len(cUniq)-1].count += 1
-			} else {
-				count = 1
-				countU := CountU { count: count, num: k }
-				cUniq = append(cUniq, countU)
-			}
 		}
+
 		last = v
 	}
 	return cUniq
