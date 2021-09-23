@@ -62,6 +62,11 @@ func startFlags(str string, params Params) string {
 	var line, newSlice []string
 	line = append(line, strings.Split(str, "\n")...)
 
+	// for tab \n in scanner
+	if len(params.InputFile) == 0 {
+		line = line[:len(line)-2]
+	}
+
 	// flags -f, -s
 	if params.NumFields != 0 {
 		newSlice = cutStrF(line, params.NumFields)
