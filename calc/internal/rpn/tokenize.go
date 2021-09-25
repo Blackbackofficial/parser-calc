@@ -15,7 +15,7 @@ var numberPattern = regexp.MustCompile(`^(\d+(\.\d*)?|\.\d+?)([eE][-+]?\d+)?`)
 func Tokenize(exp string) ([]string, error) {
 	skip := 0
 	start = true
-	var unary int// MUST!
+	var unary int // MUST!
 	var tokens []string
 	var parenthesis int
 	for i, r := range exp {
@@ -78,6 +78,9 @@ func Tokenize(exp string) ([]string, error) {
 		default:
 			return tokens, makeError(exp, i, "error regx '%c'", r)
 		}
+	}
+	if parenthesis != 0 {
+		return tokens, errors.New("No closing parenthesis")
 	}
 	return tokens, nil
 }
