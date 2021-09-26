@@ -8,13 +8,14 @@ import (
 // This regex matches the number and identifier tokens, respectively.
 var numberPattern = regexp.MustCompile(`^(\d+(\.\d*)?|\.\d+?)([eE][-+]?\d+)?`)
 
-var unary = 0
+var unary int
 var start bool
 
 // Tokenize breaks an expression into tokens. WELCOME TO THOSE COMPILERS WITH THEIR LEXICAL ANALYSIS!
 func Tokenize(exp string) ([]string, error) {
 	skip := 0
 	start = true
+	unary = 0 // MUST!
 	var tokens []string
 	for i, r := range exp {
 		// Previously checked runes

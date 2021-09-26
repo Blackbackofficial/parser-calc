@@ -1,0 +1,8 @@
+$cat input.txt
+I love music.
+A love music.
+C love music.
+
+I love music of Kartik.
+We love music of Kartik.
+Thanks.

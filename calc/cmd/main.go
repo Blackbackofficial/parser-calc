@@ -14,7 +14,7 @@ func main()  {
 		str := scan.Text()
 
 		if str == "exit" {
-			return
+			os.Exit(0)
 		}
 
 		calc := rpn.RPN{}
