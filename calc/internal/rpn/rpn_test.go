@@ -2,6 +2,7 @@ package rpn
 
 import (
 	"github.com/stretchr/testify/assert"
+	"log"
 	"math"
 	"testing"
 )
@@ -172,7 +173,10 @@ func TestConvertToRPNAndCalculateRPN(t *testing.T) {
 				c := RPN{}
 				token, _ := Tokenize(tc.input)
 				c.ConvertToRPN(token)
-				c.CalculateRPN()
+				_, err := c.CalculateRPN()
+				if err != nil {
+					log.Println("Invalid in CalculateRPN")
+				}
 				assert.Equal(t, c.rpnExpression, tc.rpnExpression)
 				assert.Equal(t, c.GetResult(), tc.result)
 			} else {

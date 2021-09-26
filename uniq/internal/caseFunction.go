@@ -16,19 +16,13 @@ func cUnique(arrStr []string, params Params) []CountU {
 	var cUniq []CountU
 	var last string
 	for k, v := range arrStr {
-		if count == 0 {
+		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
 			count++
+			cUniq[len(cUniq)-1].count += 1
+		} else {
+			count = 1
 			countU := CountU { count: count, num: k }
 			cUniq = append(cUniq, countU)
-		} else {
-			if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
-				count++
-				cUniq[len(cUniq)-1].count += 1
-			} else {
-				count = 1
-				countU := CountU { count: count, num: k }
-				cUniq = append(cUniq, countU)
-			}
 		}
 		last = v
 	}
@@ -76,8 +70,8 @@ func uUnique(arrStr []string, params Params) []int {
 }
 
 // Flag -f
-func cutStrF(arrStr []string, numField int) []string {
-	if numField < 0  {
+func cutStrF(arrStr []string, params Params) []string {
+	if params.NumFields < 0  {
 		log.Fatalln("Incorrect num field")
 	}
 
@@ -86,7 +80,7 @@ func cutStrF(arrStr []string, numField int) []string {
 		var str string
 		s := strings.Split(v, " ")
 		for k, v := range s {
-			if k < numField || v == ""{
+			if k < params.NumFields || v == ""{
 				continue
 			}
 			if len(s)-1 == k {
@@ -101,17 +95,13 @@ func cutStrF(arrStr []string, numField int) []string {
 }
 
 // Flag -s
-func cutCharS(arrStr []string, numChar int) []string {
-	if numChar < 0  {
-		log.Fatalln("Incorrect num field")
-	}
-
+func cutCharS(arrStr []string, params Params) []string {
 	var newSlice []string
 	for _, v := range arrStr {
 		var str string
 		s := strings.Split(v, "")
 		for k, v := range s {
-			if k < numChar || v == ""{
+			if k < params.NumChars || v == ""{
 				continue
 			}
 			str += v
@@ -125,10 +115,12 @@ func cutCharS(arrStr []string, numChar int) []string {
 func defaultF(arrStr []string, params Params) []int {
 	var position []int
 	var last string
+	var first bool
 	for k, v := range arrStr {
-		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) { // flag -i
+		if (params.I && strings.EqualFold(last, v)) || (!params.I && last == v) && first { // flag -i
 			continue
 		}
+		first = true
 		position = append(position, k)
 		last = v
 	}

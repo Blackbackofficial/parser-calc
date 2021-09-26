@@ -4,26 +4,29 @@ import (
 	"bufio"
 	"bytes"
 	"io"
-	"log"
 	"os"
 	"strconv"
 	"strings"
 )
 
 // Uniq starting the utility
-func Uniq(params Params)  {
+func Uniq(params Params) error {
 	var str, read string
+	var err error
 
 	if len(params.InputFile) == 0 {
 		sc := bufio.NewScanner(os.Stdin)
 		for sc.Scan() { // stop CTRL+D || control+D
 			read += sc.Text() +"\n"
 		}
-		str = startFlags(read, params)
+		str, err = startFlags(read, params)
+		if err != nil {
+			return err
+		}
 	} else {
 		in, err := os.Open(params.InputFile)
 		if err != nil {
-			log.Fatalln(err)
+			return err
 		}
 
 		defer in.Close()
@@ -31,46 +34,55 @@ func Uniq(params Params)  {
 		buf := new(bytes.Buffer)
 		_, err = buf.ReadFrom(in)
 		if err != nil {
-			log.Fatalln(err)
+			return err
 		}
-		str = startFlags(buf.String(), params)
+		str, err = startFlags(buf.String(), params)
+		if err != nil {
+			return err
+		}
 	}
 
 	if len(params.OutputFile) == 0 {
 		_, err := io.WriteString(os.Stdout, str)
 		if err != nil {
-			log.Fatalln(err)
+			return err
 		}
 	} else {
 		out, err := os.Create(params.OutputFile)
 
 		if err != nil {
-			log.Fatalln(err)
+			return err
 		}
 
 		defer out.Close()
 
 		_, err = out.WriteString(str)
 		if err != nil {
-			log.Fatalln(err)
+			return err
 		}
 	}
+	return nil
 }
 
 // See which flags are active
-func startFlags(str string, params Params) string {
+func startFlags(str string, params Params) (string, error) {
 	var line, newSlice []string
 	line = append(line, strings.Split(str, "\n")...)
 
+	// for tab \n in scanner
+	if len(params.InputFile) == 0 {
+		line = line[:len(line)-1]
+	}
+
 	// flags -f, -s
 	if params.NumFields != 0 {
-		newSlice = cutStrF(line, params.NumFields)
+		newSlice = cutStrF(line, params)
 	}
 	if params.NumChars != 0 {
 		if params.NumFields != 0 {
-			newSlice = cutCharS(newSlice, params.NumChars)
+			newSlice = cutCharS(newSlice, params)
 		} else {
-			newSlice = cutCharS(line, params.NumChars)
+			newSlice = cutCharS(line, params)
 		}
 	}
 
@@ -82,7 +94,7 @@ func startFlags(str string, params Params) string {
 		} else {
 			cUniq = cUnique(newSlice, params)
 		}
-		return convertCount(line, cUniq)
+		return convertCount(line, cUniq), nil
 	} else if params.D {
 		var uniq []int
 		if len(newSlice) == 0 {
@@ -90,7 +102,7 @@ func startFlags(str string, params Params) string {
 		} else {
 			uniq = dRepeated(newSlice, params)
 		}
-		return convert(line, uniq)
+		return convert(line, uniq), nil
 	} else if params.U {
 		var uUniq []int
 		if len(newSlice) == 0 {
@@ -98,7 +110,7 @@ func startFlags(str string, params Params) string {
 		} else {
 			uUniq = uUnique(newSlice, params)
 		}
-		return convert(line, uUniq)
+		return convert(line, uUniq), nil
 	} else {
 		var def []int
 		if len(newSlice) == 0 {
@@ -106,7 +118,7 @@ func startFlags(str string, params Params) string {
 		} else {
 			def = defaultF(newSlice, params)
 		}
-		return convert(line, def)
+		return convert(line, def), nil
 	}
 }
 
