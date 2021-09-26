@@ -70,8 +70,8 @@ func uUnique(arrStr []string, params Params) []int {
 }
 
 // Flag -f
-func cutStrF(arrStr []string, numField int) []string {
-	if numField < 0  {
+func cutStrF(arrStr []string, params Params) []string {
+	if params.NumFields < 0  {
 		log.Fatalln("Incorrect num field")
 	}
 
@@ -80,7 +80,7 @@ func cutStrF(arrStr []string, numField int) []string {
 		var str string
 		s := strings.Split(v, " ")
 		for k, v := range s {
-			if k < numField || v == ""{
+			if k < params.NumFields || v == ""{
 				continue
 			}
 			if len(s)-1 == k {
@@ -95,13 +95,13 @@ func cutStrF(arrStr []string, numField int) []string {
 }
 
 // Flag -s
-func cutCharS(arrStr []string, numChar int) []string {
+func cutCharS(arrStr []string, params Params) []string {
 	var newSlice []string
 	for _, v := range arrStr {
 		var str string
 		s := strings.Split(v, "")
 		for k, v := range s {
-			if k < numChar || v == ""{
+			if k < params.NumChars || v == ""{
 				continue
 			}
 			str += v

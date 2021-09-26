@@ -76,13 +76,13 @@ func startFlags(str string, params Params) (string, error) {
 
 	// flags -f, -s
 	if params.NumFields != 0 {
-		newSlice = cutStrF(line, params.NumFields)
+		newSlice = cutStrF(line, params)
 	}
 	if params.NumChars != 0 {
 		if params.NumFields != 0 {
-			newSlice = cutCharS(newSlice, params.NumChars)
+			newSlice = cutCharS(newSlice, params)
 		} else {
-			newSlice = cutCharS(line, params.NumChars)
+			newSlice = cutCharS(line, params)
 		}
 	}
 

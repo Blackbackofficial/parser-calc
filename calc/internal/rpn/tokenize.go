@@ -27,6 +27,7 @@ func Tokenize(exp string) ([]string, error) {
 		if parenthesis < 0 {
 			return tokens, errors.New("Invalid in parenthesis")
 		}
+
 		// Previously checked runes
 		if skip > 0 {
 			skip--
@@ -79,6 +80,7 @@ func Tokenize(exp string) ([]string, error) {
 			return tokens, makeError(exp, i, "error regx '%c'", r)
 		}
 	}
+
 	if parenthesis != 0 {
 		return tokens, errors.New("No closing parenthesis")
 	}
