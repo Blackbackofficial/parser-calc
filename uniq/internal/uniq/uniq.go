@@ -1,4 +1,4 @@
-package internal
+package uniq
 
 import (
 	"bufio"
