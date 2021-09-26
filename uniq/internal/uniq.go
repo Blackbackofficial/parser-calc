@@ -19,7 +19,6 @@ func Uniq(params Params) error {
 		for sc.Scan() { // stop CTRL+D || control+D
 			read += sc.Text() +"\n"
 		}
-
 		str, err = startFlags(read, params)
 		if err != nil {
 			return err
@@ -37,7 +36,6 @@ func Uniq(params Params) error {
 		if err != nil {
 			return err
 		}
-
 		str, err = startFlags(buf.String(), params)
 		if err != nil {
 			return err
