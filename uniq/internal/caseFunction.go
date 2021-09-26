@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"log"
 	"strings"
 )
 
@@ -71,10 +70,6 @@ func uUnique(arrStr []string, params Params) []int {
 
 // Flag -f
 func cutStrF(arrStr []string, params Params) []string {
-	if params.NumFields < 0  {
-		log.Fatalln("Incorrect num field")
-	}
-
 	var newSlice []string
 	for _, v := range arrStr {
 		var str string

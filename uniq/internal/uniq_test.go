@@ -182,29 +182,51 @@ func TestUniqueCases(t *testing.T) {
 		name        		string
 		params		 		Params
 		inputCase			[]string
-		outputCaseS			[]string // Flag -f -s
+		output				string
 		input				string
 	} {
 		{
-			name:        	"Flag -f num 0",
-			params: 		Params{NumFields: -1},
+			name:        	"Flag -d success",
+			params: 		Params{D: true},
 			input:       	"We love music.\nI love music.\nThey love music.\n\nI love music of Kartik.\nWe love music of Kartik.\nThanks.",
-			outputCaseS:	[]string{"We love music.", "I love mmusic.", "They love music.", "I love music of Kartik.", "We love music of Kartik.", "Thanks."},
+			output:			"",
+		}, {
+			name:        	"Flag -d",
+			params: 		Params{D: true},
+			input:       	"I love music.\nI love music.\nI love music.\n\nI love music of Kartik.\nI love music of Kartik.\nThanks.\nI love music of Kartik.\nI love music of Kartik.",
+			output:			"I love music.\nI love music of Kartik.\n",
+		}, {
+			name:        	"Flag -c",
+			params: 		Params{C: true},
+			input:       	"I love music.\nI love music.\nI love music.\n\nI love music of Kartik.\nI love music of Kartik.\nThanks.\nI love music of Kartik.\nI love music of Kartik.",
+			output:			"3 I love music.\n1 \n2 I love music of Kartik.\n1 Thanks.\n1 I love music of Kartik.\n",
+		}, {
+			name:        	"Flag -u",
+			params: 		Params{U: true},
+			input:       	"I love music.\nI love music.\nI love music.\n\nI love music of Kartik.\nI love music of Kartik.\nThanks.\nI love music of Kartik.\nI love music of Kartik.",
+			output:			"\nThanks.\n",
+		}, {
+			name:        	"Flag -i",
+			params: 		Params{I: true},
+			input:       	"I LOVE MUSIC.\nI love music.\nI LoVe MuSiC.\n\nI love MuSIC of Kartik.\nI love music of kartik.\nThanks.\nI love music of kartik.\nI love MuSIC of Kartik.",
+			output:			"I LOVE MUSIC.\n\nI love MuSIC of Kartik.\nThanks.\nI love music of kartik.\n",
+		}, {
+			name:        	"Flag -f num 1",
+			params: 		Params{NumFields: 1},
+			input:       	"We love music.\nI love music.\nThey love music.\n\nI love music of Kartik.\nWe love music of Kartik.\nThanks.\n",
+			output:			"We love music.\n\nI love music of Kartik.\nThanks.\n",
+		}, {
+			name:        	"Flag -s num 1",
+			params: 		Params{NumChars: 1},
+			input:       	"I love music.\nA love music.\nC love music.\n\nI love music of Kartik.\nWe love music of Kartik.\nThanks.\n",
+			output:			"I love music.\n\nI love music of Kartik.\nWe love music of Kartik.\nThanks.\n",
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			if tc.params.NumFields < 0 && tc.params.NumChars == 0 {
-				uniq, err := startFlags(tc.input, tc.params)
-				if err != nil {
-					assert.Equal(t, uniq, tc.outputCaseS)
-				}
-				assert.Equal(t, uniq, tc.outputCaseS)
-			} else if tc.params.NumChars > 0 && tc.params.NumChars == 0 {
-				//uniq := cutCharS(tc.input, tc.params)
-				//assert.Equal(t, uniq, tc.outputCaseS)
-			}
+			uniq, _ := startFlags(tc.input, tc.params)
+			assert.Equal(t, uniq, tc.output)
 		})
 	}
 }
