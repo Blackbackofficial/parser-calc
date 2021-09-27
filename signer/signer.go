@@ -3,11 +3,27 @@ package main
 import (
 	"sort"
 	"strings"
+	"sync"
 )
 
 // ExecutePipeline which provides us with pipelining of worker functions that do something
 func ExecutePipeline(jobs ...job) {
+	stdIn := make(chan interface{})
+	stdOut := make(chan interface{})
 
+	wg := &sync.WaitGroup{}
+	for _, someJob := range jobs {
+		wg.Add(1)
+		go func(wg *sync.WaitGroup, in, out chan interface{}, j job) {
+			// TODO: mb defer??
+			close(out)
+			wg.Done()
+			j(in, out)
+		}(wg, stdIn, stdOut, someJob)
+		stdIn = stdOut
+		stdOut = make(chan interface{})
+	}
+	wg.Wait()
 }
 
 // SingleHash considers the value crc32 (data) + "~" + crc32 (md5 (data)) (concatenation of two strings through ~), where data is what came to the input (in fact, numbers from the first function)
