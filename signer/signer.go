@@ -15,7 +15,7 @@ func SingleHash(stdIn, out chan interface{}) {
 
 }
 
-// MultiHash counts the value crc32 (th + data)) (concatenation of a digit reduced to a string and a string), where th = 0..5, then takes the concatenation of the results in the order of calculation (0..5), where data is what came to the input
+// MultiHash counts the value crc32 (th + data), where th = 0..5, then takes the concatenation of the results in the order of calculation (0..5), where data is what came to the input
 func MultiHash(stdIn, out chan interface{}) {
 
 }
