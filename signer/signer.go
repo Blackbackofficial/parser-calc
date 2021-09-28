@@ -37,20 +37,23 @@ func SingleHash(stdIn chan interface{}, stdOut chan interface{}) {
 		go func(str string) {
 			wg1 := &sync.WaitGroup{}
 			wg1.Add(2) // 2 process
-			var str1, str2 string
-			go dataSignerCrc32(wg1, &str, &str1)
-			go dataSignerCrc32(wg1, &strMd5, &str2)
+			str1 := dataSignerCrc32(wg1, &str)
+			str2 := dataSignerCrc32(wg1, &strMd5)
 			wg1.Wait()
 			defer wg.Done()
-			stdOut <- strings.Join([]string{str1, str2}, "~")
+			stdOut <- strings.Join([]string{<-str1, <-str2}, "~")
 		}(strconv.Itoa(input.(int)))
 	}
 	wg.Wait()
 }
 
-func dataSignerCrc32(wg1 *sync.WaitGroup, str, out *string) {
-	*out = DataSignerCrc32(*str)
+func dataSignerCrc32(wg1 *sync.WaitGroup, str *string) chan string {
+	out := make(chan string)
+	go func(data string, out chan <-string) {
+		out <- DataSignerCrc32(*str)
+	}(*str, out)
 	wg1.Done()
+	return out
 }
 
 // MultiHash counts the value crc32 (th + data), where th = 0..5, then takes the concatenation of the results in the order of calculation (0..5), where data is what came to the input
@@ -64,7 +67,10 @@ func MultiHash(stdIn chan interface{}, stdOut chan interface{}) {
 			wg1.Add(th)
 			for v := 0; v < th; v++ {
 				str1 := strconv.Itoa(v)+str
-				go dataSignerCrc32(wg1, &str1, &strSigner[v])
+				go func(wg1 *sync.WaitGroup, str, out *string) {
+					*out = DataSignerCrc32(*str)
+					wg1.Done()
+				}(wg1, &str1, &strSigner[v])
 			}
 			wg1.Wait()
 			stdOut <- strings.Join(strSigner, "")
