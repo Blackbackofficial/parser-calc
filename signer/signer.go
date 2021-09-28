@@ -37,9 +37,10 @@ func SingleHash(stdIn chan interface{}, stdOut chan interface{}) {
 		go func(str string) {
 			wg1 := &sync.WaitGroup{}
 			wg1.Add(2) // 2 process
-			str1 := dataSignerCrc32(wg1, &str)
-			str2 := dataSignerCrc32(wg1, &strMd5)
-			wg1.Wait()
+			str1 := make(chan string)
+			str2 := make(chan string)
+			go dataSignerCrc32(wg1, &str, str1)
+			go dataSignerCrc32(wg1, &strMd5, str2)
 			defer wg.Done()
 			stdOut <- strings.Join([]string{<-str1, <-str2}, "~")
 		}(strconv.Itoa(input.(int)))
@@ -47,11 +48,8 @@ func SingleHash(stdIn chan interface{}, stdOut chan interface{}) {
 	wg.Wait()
 }
 
-func dataSignerCrc32(wg1 *sync.WaitGroup, str *string) chan string {
-	out := make(chan string)
-	go func(data string, out chan <-string) {
-		out <- DataSignerCrc32(*str)
-	}(*str, out)
+func dataSignerCrc32(wg1 *sync.WaitGroup, str *string, out chan <-string) chan <-string {
+	out <- DataSignerCrc32(*str)
 	wg1.Done()
 	return out
 }
