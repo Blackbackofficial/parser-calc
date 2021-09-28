@@ -48,7 +48,7 @@ func SingleHash(stdIn chan interface{}, stdOut chan interface{}) {
 				wg1.Done()
 			}(str)
 			wg1.Wait()
-			wg.Done()
+			defer wg.Done()
 			stdOut <- strings.Join([]string{str1, str2}, "~")
 		}(strconv.Itoa(input.(int)))
 	}
