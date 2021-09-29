@@ -35,11 +35,11 @@ func SingleHash(stdIn, stdOut chan interface{}) {
 		strMd5 := DataSignerMd5(strconv.Itoa(input.(int)))
 
 		go func(str string) {
+			defer wg.Done()
 			str1 := make(chan string)
 			str2 := make(chan string)
 			go dataSignerCrc32(str, str1)
 			go dataSignerCrc32(strMd5, str2)
-			defer wg.Done()
 			stdOut <- strings.Join([]string{<-str1, <-str2}, "~")
 		}(strconv.Itoa(input.(int)))
 	}
