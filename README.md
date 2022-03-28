@@ -2,52 +2,52 @@
 
 # Part 1
 
-## Часть 1. Uniq
+## Part 1. Uniq
 
-Реализована утилита, с помощью которой можно вывести или отфильтровать
-повторяющиеся строки в файле (аналог UNIX утилиты `uniq`). Причём повторяющиеся
-входные строки не должны распозноваться, если они не следуют строго друг за другом.
-Сама утилита имеет набор параметров, которые необходимо поддержать.
+A utility has been implemented with which you can display or filter
+repeated lines in a file (analogous to the UNIX `uniq` utility). And recurring
+input strings must not be recognized unless they strictly follow each other.
+The utility itself has a set of parameters that must be supported.
 
-### Параметры
+### Parameters
 
-`-с` - подсчитать количество встречаний строки во входных данных.
-Вывести это число перед строкой отделив пробелом.
+`-c` - count the number of occurrences of the string in the input.
+Output this number before the string separated by a space.
 
-`-d` - вывести только те строки, которые повторились во входных данных.
+`-d` - output only those lines that are repeated in the input.
 
-`-u` - вывести только те строки, которые не повторились во входных данных.
+`-u` - output only those lines that are not repeated in the input.
 
-`-f num_fields` - не учитывать первые `num_fields` полей в строке.
-Полем в строке является непустой набор символов отделённый пробелом.
+`-f num_fields` Ignore the first `num_fields` fields in a line.
+A field in a string is a non-empty set of characters separated by a space.
 
-`-s num_chars` - не учитывать первые `num_chars` символов в строке.
-При использовании вместе с параметром `-f` учитываются первые символы
-после `num_fields` полей (не учитывая пробел-разделитель после
-последнего поля).
+`-s num_chars` ignore the first `num_chars` characters in the string.
+When used with the `-f` option, first characters are counted
+after `num_fields` fields (ignoring space delimiter after
+last field).
 
-`-i` - не учитывать регистр букв.
+`-i` - do not take into account the case of letters.
 
-### Использование
+### Usage
 
 `uniq [-c | -d | -u] [-i] [-f num] [-s chars] [input_file [output_file]]`
 
-1. Все параметры опциональны. Поведения утилиты без параметров --
-   простой вывод уникальных строк из входных данных.
+1. All parameters are optional. Utility behaviors without parameters --
+   simple derivation of unique strings from the input.
 
-2. Параметры c, d, u взаимозаменяемы. Необходимо учитывать,
-   что параллельно эти параметры не имеют никакого смысла. При
-   передаче одного вместе с другим нужно отобразить пользователю
-   правильное использование утилиты
+2. Parameters c, d, u are interchangeable. Should be considered,
+   that in parallel these parameters do not make any sense. At
+   passing one along with the other needs to be displayed to the user
+   proper use of the utility
 
-3. Если не передан input_file, то входным потоком считать stdin
+3. If input_file is not passed, then consider stdin as the input stream
 
-4. Если не передан output_file, то выходным потоком считать stdout
+4. If output_file is not passed, then consider stdout as the output stream
 
-### Пример работы
+### Work example
 
 <details>
-    <summary>Без параметров</summary>
+    <summary>No parameters</summary>
 
 ```bash
 $cat input.txt
@@ -57,21 +57,21 @@ I love music.
 
 I love music of Kartik.
 I love music of Kartik.
-Thanks.
+thanks.
 I love music of Kartik.
 I love music of Kartik.
 $cat input.txt | go run uniq.go
 I love music.
 
 I love music of Kartik.
-Thanks.
+thanks.
 I love music of Kartik.
 ```
 
 </details>
 
 <details>
-    <summary>С параметром input_file</summary>
+    <summary>With input_file</summary>
 
 ```bash
 $cat input.txt
@@ -81,21 +81,21 @@ I love music.
 
 I love music of Kartik.
 I love music of Kartik.
-Thanks.
+thanks.
 I love music of Kartik.
 I love music of Kartik.
 $go run uniq.go input.txt
 I love music.
 
 I love music of Kartik.
-Thanks.
+thanks.
 I love music of Kartik.
 ```
 
 </details>
 
 <details>
-    <summary>С параметрами input_file и output_file</summary>
+    <summary>With input_file and output_file parameters</summary>
 
 ```bash
 $cat input.txt
@@ -105,7 +105,7 @@ I love music.
 
 I love music of Kartik.
 I love music of Kartik.
-Thanks.
+thanks.
 I love music of Kartik.
 I love music of Kartik.
 $go run uniq.go input.txt output.txt
@@ -113,14 +113,14 @@ $cat output.txt
 I love music.
 
 I love music of Kartik.
-Thanks.
+thanks.
 I love music of Kartik.
 ```
 
 </details>
 
 <details>
-    <summary>С параметром -c</summary>
+    <summary>With the -c option</summary>
 
 ```bash
 $cat input.txt
@@ -130,21 +130,21 @@ I love music.
 
 I love music of Kartik.
 I love music of Kartik.
-Thanks.
+thanks.
 I love music of Kartik.
 I love music of Kartik.
 $cat input.txt | go run uniq.go -c
 3 I love music.
-1 
+one
 2 I love music of Kartik.
-1 Thanks.
+1 thanks.
 2 I love music of Kartik.
 ```
 
 </details>
 
 <details>
-    <summary>С параметром -d</summary>
+    <summary>With the -d option</summary>
 
 ```bash
 $cat input.txt
@@ -154,7 +154,7 @@ I love music.
 
 I love music of Kartik.
 I love music of Kartik.
-Thanks.
+thanks.
 I love music of Kartik.
 I love music of Kartik.
 $cat input.txt | go run uniq.go -d
@@ -166,7 +166,7 @@ I love music of Kartik.
 </details>
 
 <details>
-    <summary>С параметром -u</summary>
+    <summary>With the -u option</summary>
 
 ```bash
 $cat input.txt
@@ -176,18 +176,18 @@ I love music.
 
 I love music of Kartik.
 I love music of Kartik.
-Thanks.
+thanks.
 I love music of Kartik.
 I love music of Kartik.
 $cat input.txt | go run uniq.go -u
 
-Thanks.
+thanks.
 ```
 
 </details>
 
 <details>
-    <summary>С параметром -i</summary>
+    <summary>With the -i option</summary>
 
 ```bash
 $cat input.txt
@@ -197,21 +197,21 @@ I LoVe MuSiC.
 
 I love MuSIC of Kartik.
 I love music of kartik.
-Thanks.
+thanks.
 I love music of kartik.
 I love MuSIC of Kartik.
 $cat input.txt | go run uniq.go -i
 I LOVE MUSIC.
 
 I love MuSIC of Kartik.
-Thanks.
+thanks.
 I love music of kartik.
 ```
 
 </details>
 
 <details>
-    <summary>С параметром -f num</summary>
+    <summary>With -f num option</summary>
 
 ```bash
 $cat input.txt
@@ -221,18 +221,18 @@ They love music.
 
 I love music of Kartik.
 We love music of Kartik.
-Thanks.
+thanks.
 $cat input.txt | go run uniq.go -f 1
 We love music.
 
 I love music of Kartik.
-Thanks.
+thanks.
 ```
 
 </details>
 
 <details>
-    <summary>С параметром -s num</summary>
+    <summary>With -s num option</summary>
 
 ```bash
 $cat input.txt
@@ -242,40 +242,40 @@ C love music.
 
 I love music of Kartik.
 We love music of Kartik.
-Thanks.
+thanks.
 $cat input.txt | go run uniq.go -s 1
 I love music.
 
 I love music of Kartik.
 We love music of Kartik.
-Thanks.
+thanks.
 ```
 
 </details>
 
-### Тестирование
+### Testing
 
-Нужно протестировать поведение написанной функциональности
-с различными параметрами. Для тестирования нужно написать unit-тесты
-на эту функциональность. Тесты нужны как для успешных случаев,
-так и для неуспешных.
+You need to test the behavior of the written functionality
+with different settings. For testing, you need to write unit tests
+for this functionality. Tests are needed both for successful cases,
+as well as for the unsuccessful.
 
-## Часть 2. Calc
+## Part 2. Calc
 
-Нужно написать калькулятор, умеющий вычислять выражение, подаваемое на STDIN.
+We need to write a calculator that can calculate the expression given to STDIN.
 
-Достаточно реализовать сложение, вычитание, умножение, деление и поддержку скобок.
+It is enough to implement addition, subtraction, multiplication, division and parentheses support.
 
-Тут также нужны тесты 🙂 Тестами нужно покрыть все операции.
+Tests are also needed here 🙂 Tests need to cover all operations.
 
-### Пример работы
+### Work example
 
 ```bash
     $ go run calc.go "(1+2)-3"
     0
 
     $ go run calc.go "(1+2)*3"
-    9
+    nine
 ```
 
 
@@ -283,37 +283,37 @@ Thanks.
 
 ------
 
-В этом задании мы пишем аналог unix pipeline, что-то вроде:
+In this task, we are writing an analogue of the unix pipeline, something like:
 ```
-grep 127.0.0.1 | awk '{print $2}' | sort | uniq -c | sort -nr
+grep 127.0.0.1 | awk '{print $2}' | sort | uniq -c | sort-nr
 ```
 
-Когда STDOUT одной программы передаётся как STDIN в другую программу
+When the STDOUT of one program is passed as STDIN to another program
 
-Но в нашем случае эти роли выполняют каналы, которые мы передаём из одной функции в другую.
+But in our case, these roles are performed by channels that we pass from one function to another.
 
-*Это сложное задание, не стесняйтесь просить помощи, оно делается не сразу, но когда в голове щёлкнет -  всё становится очень просто*
+*This is a difficult task, feel free to ask for help, it is not done immediately, but when it clicks in your head, everything becomes very simple*
 
-*Задание при применению материалов лекции. Всё что вам необходимо есть в коде лекции*
+*Assignment when using lecture materials. Everything you need is in the lecture code*
 
-Само задание по сути состоит из двух частей
-* Написание функции ExecutePipeline которая обеспечивает нам конвейерную обработку функций-воркеров, которые что-то делают.
-* Написание нескольких функций, которые считают нам какую-то условную хеш-сумму от входных данных
+The task itself essentially consists of two parts.
+* Writing an ExecutePipeline function that provides us with pipeline processing of worker functions that do something.
+* Writing several functions that consider us some kind of conditional hash sum from the input data
 
-Расчет хеш-суммы реализован следующей цепочкой:
-* SingleHash считает значение crc32(data)+"~"+crc32(md5(data)) ( конкатенация двух строк через ~), где data - то что пришло на вход (по сути - числа из первой функции)
-* MultiHash считает значение crc32(th+data)) (конкатенация цифры, приведённой к строке и строки), где th=0..5 ( т.е. 6 хешей на каждое входящее значение ), потом берёт конкатенацию результатов в порядке расчета (0..5), где data - то что пришло на вход (и ушло на выход из SingleHash)
-* CombineResults получает все результаты, сортирует (https://golang.org/pkg/sort/), объединяет отсортированный результат через _ (символ подчеркивания) в одну строку
-* crc32 считается через функцию DataSignerCrc32
-* md5 считается через DataSignerMd5
+The calculation of the hash sum is implemented by the following chain:
+* SingleHash considers the value of crc32(data)+"~"+crc32(md5(data)) (concatenation of two strings through ~), where data is what came to the input (in fact, numbers from the first function)
+* MultiHash considers the crc32(th+data)) value (the concatenation of the digit cast to the string and the string), where th=0..5 ( i.e. 6 hashes for each input value ), then takes the concatenation of the results in the order of calculation ( 0..5), where data is what came to the input (and went to the output from SingleHash)
+* CombineResults gets all results, sorts (https://golang.org/pkg/sort/), combines sorted result with _ (underscore character) into one string
+* crc32 is read through the DataSignerCrc32 function
+* md5 is read through DataSignerMd5
 
-В чем подвох:
-* DataSignerMd5 может одновременно вызываться только 1 раз, считается 10 мс. Если одновременно запустится несколько - будет перегрев на 1 сек
-* DataSignerCrc32, считается 1 сек
-* На все расчеты у нас 3 сек.
-* Если делать в лоб, линейно - для 7 элементов это займёт почти 57 секунд, следовательно надо это как-то распараллелить
+What's the catch:
+* DataSignerMd5 can only be called once at a time, counts as 10ms. If several start up at the same time, there will be an overheat for 1 second
+* DataSignerCrc32, counted as 1 sec
+* We have 3 seconds for all calculations.
+* If you do it linearly - for 7 elements it will take almost 57 seconds, so you need to somehow parallelize it
 
-Результаты, которые выводятся если отправить 2 значения (закомментировано в тесте):
+The results that are displayed if you send 2 values ​​​​(commented out in the test):
 
 ```
 0 SingleHash data 0
@@ -342,7 +342,8 @@ grep 127.0.0.1 | awk '{print $2}' | sort | uniq -c | sort -nr
 2212294583~709660146 MultiHash: crc32(th+step1)) 5 2427381542
 2212294583~709660146 MultiHash result: 4958044192186797981418233587017209679042592862002427381542
 
-CombineResults 29568666068035183841425683795340791879727309630931025356555_4958044192186797981418233587017209679042592862002427381542
+CombineResults
 ```
 
-Запускать как `go test -v -race`
+Run as `go test -v -race`
+
